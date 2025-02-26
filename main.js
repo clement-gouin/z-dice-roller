@@ -22,12 +22,13 @@ let app = {
       header: "",
       successText: "",
       failureText: "",
-      alreadyRolledText: "<h2>You already rolled today</h2>",
+      alreadyRolledText: "<h2>You already rolled the dice</h2>",
       diceCount: 1,
       diceSides: 6,
       targetScore: 0,
       dices: [],
       rolling: false,
+      expiration: 24 * 60,
     };
   },
   computed: {
@@ -138,6 +139,14 @@ let app = {
         this.targetScore = parseInt(rawTarget);
       }
       if (parts.length) {
+        const rawExpiration = parts.shift();
+        if (!/^\d+$/.test(rawExpiration)) {
+          this.expiration = 24 * 60;
+        } else {
+          this.expiration = parseInt(rawExpiration);
+        }
+      }
+      if (parts.length) {
         this.alreadyRolledText = parts.shift();
         if (!/<[^>]*>/.test(this.alreadyRolledText)) {
           this.alreadyRolledText = `<h2>${this.alreadyRolledText}</h2>`;
@@ -145,9 +154,9 @@ let app = {
       }
       return false;
     },
-    setCookie(cname, cvalue, exdays) {
+    setCookie(cname, cvalue) {
       const d = new Date();
-      d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+      d.setTime(d.getTime() + this.expiration * 60 * 1000);
       let expires = "expires=" + d.toUTCString();
       console.log(cname + "=" + cvalue + "; path=/; " + expires);
       document.cookie = cname + "=" + cvalue + "; path=/; " + expires;

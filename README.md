@@ -14,7 +14,8 @@ Header (5-6 lines):
 3   Incorrect answer (html, <h2> on plain text)
 4   Dices to roll (as XdY)
 5   Minimum score to obtain (0+)
-6   Already rolled text (html, optional, <h2> on plain text)
+6   Saved roll expiration in minutes (0+, default to 1 day)
+7   Already rolled text (html, optional, <h2> on plain text)
 ```
 
 ## Sample
