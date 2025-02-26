@@ -1,60 +1,33 @@
-# [Z] App (template)
-*Working template for URL encoded app*
+# Dice Roller
+*When rolling decides your fate*
 
-<!-- TODO: 1. rename app -->
-
-### [Tool link](https://clement-gouin.github.io/z-app/)
+### [Tool link](https://clement-gouin.github.io/dice-roller/)
 
 ## Data format
 
-<!-- TODO: 3. change data format -->
-
 Format is made line by line
 
-Header (1 line):
+Header (5-6 lines):
 ```txt
-1   Title and description (html, <h1> on plain text)
+1   Roll name (html, <h1> on plain text)
+2   Correct answer (html, <h2> on plain text)
+3   Incorrect answer (html, <h2> on plain text)
+4   Dices to roll (as XdY)
+5   Minimum score to obtain (0+)
+6   Already rolled text (html, optional, <h2> on plain text)
 ```
 
-After that each link is defined as follows:
-```txt
-1   Data (html)
-```
-
-## Samples
-
-<!-- TODO: 4. change sample -->
+## Sample
 
 ```txt
-Url encoded app template
-<i>Italic text</i>
-<b>Bold text</b>
-<pre>code text</pre>
-<a href="https://google.com">link</a>
+Gambling time
+<h2>Have a <a href='https://orteil.dashnet.org/cookieclicker/'>cookie</a> !</h2>
+You fail !
+2d6
+6
 ```
-
-## Use this template
-
-<!-- TODO: 6. remove this part -->
-
-> Every task is indicated with a TODO
-
-1. [ ] Rename app in [README.md](./README.md), [main.js](./main.js) and [index.html](./index.html)
-2. [ ] Change app hue and saturation in [style.css](./style.css)
-3. [ ] Change data format in [README.md](./README.md) and [main.js](./main.js)
-4. [ ] Change sample in [README.md](./README.md) and [main.js](./main.js)
-5. [ ] Implement your custom logic in [main.js](./main.js) and [index.html](./index.html)
-6. [ ] Remove this part and all TODO
-
-## Apps using this template
-
-* [This repository](https://github.com/clement-gouin/z-app)
-* [Treasure-Finder](https://github.com/clement-gouin/treasure-finder)
-* [On-The-Quizz](https://github.com/clement-gouin/on-the-quizz)
-* [Cross-Roads](https://github.com/clement-gouin/on-the-quizz)
-* [Dice-Roller](https://github.com/clement-gouin/cross-roads)
 
 ## Tips
 
 * [Material design colors](https://materialui.co/colors/) are available, you can use `class="red-500"` on your HTML
-* [Lucide icons](https://lucide.dev/icons) are available, you can use `<i icon=house></i>` on your HTML
+* [FontAwesome icons](https://fontawesome.com/search?ic=free) are available, you can use `<i class="fas fa-house"></i>` on your HTML

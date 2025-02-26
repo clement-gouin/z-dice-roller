@@ -80,14 +80,10 @@ CUSTOM STYLE
 ================================================= 
 */
 
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
-
 :root {
   /* https://materialui.co/colors/ */
-  /* TODO: 2. change hue and saturation */
-  --hue-primary: 0;
-  --sat-primary: 0%;
+  --hue-primary: 300;
+  --sat-primary: 30%;
   --background: hsl(var(--hue-primary), var(--sat-primary), 96%);
   --background-primary: hsl(var(--hue-primary), var(--sat-primary), 93%);
   --background-secondary: hsl(var(--hue-primary), var(--sat-primary), 90%);
@@ -129,6 +125,15 @@ table {
   font-size: 0.9em;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1em 0 0.5em;
+}
+
 p,
 ul,
 ol {
@@ -141,6 +146,12 @@ input,
 select,
 .mono {
   font-family: "Roboto Mono", monospace;
+}
+
+textarea {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
 }
 
 a {
@@ -166,6 +177,19 @@ APP STYLE
   margin: 2em 0 1rem;
 }
 
+.dice {
+  font-size: 10rem;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  line-height: 1em;
+}
+
+.dice svg {
+  display: inline-block;
+  margin: 0 0.05em;
+}
+
 button {
   display: block;
   width: 100%;
@@ -176,64 +200,8 @@ button {
   border-radius: 0.5em;
   background-color: var(--background);
   cursor: pointer;
-  font-size: 1.333em;
 }
 
 button:hover {
   background-color: var(--background-secondary);
-}
-
-svg.lucide {
-  display: inline-block;
-  vertical-align: text-top;
-}
-
-b .lucide,
-h1 .lucide,
-h2 .lucide,
-h3 .lucide,
-h4 .lucide,
-h5 .lucide,
-h6 .lucide {
-  stroke-width: 3;
-}
-
-.editor {
-  display: flex;
-  overflow-y: scroll;
-  position: relative;
-}
-
-.editor textarea {
-  margin: 0;
-  resize: none;
-  outline: none;
-  font-size: 13px;
-  text-wrap: nowrap;
-}
-
-.code {
-  flex-grow: 1;
-}
-
-.numbers {
-  overflow: hidden;
-  border: 1px solid #0000;
-  background: none;
-  text-align: right;
-  pointer-events: none;
-}
-
-.overlay {
-  display: flex;
-  position: absolute;
-  width: 100%;
-  opacity: 50%;
-  pointer-events: none;
-}
-
-.overlay > textarea {
-  border: 1px solid #0000;
-  overflow: hidden;
-  background: none;
 }

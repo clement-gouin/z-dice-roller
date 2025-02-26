@@ -2,64 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- TODO: 1. rename app -->
-    <title>Z-App</title>
+    <title>Dice Roller</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="material-colors.css" />
-    <script src="https://unpkg.com/lz-string@1.5"></script>
-    <script src="https://unpkg.com/lucide@0"></script>
-    <script type="importmap">
-      {
-        "imports": {
-          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
-        }
-      }
-    </script>
-    <script type="module" src="main.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/lz-string@1.5/libs/lz-string.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v6.7.2/js/all.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="material-colors.css" />
   </head>
   <body>
     <main id="app" style="display: none">
       <div v-if="debug">
-        <!-- TODO: 1. rename app -->
-        <h1><i icon="cog"></i> Z-App</h1>
-        <div class="editor">
-          <textarea
-            class="numbers"
-            :cols="editor.numbersCols"
-            rows="10"
-            readonly
-            ref="numbers"
-            v-model="editor.numbersText"
-          ></textarea>
-          <textarea
-            class="code"
-            v-model="debugData"
-            ref="code"
-            rows="10"
-            @scroll="editorScroll"
-          ></textarea>
-          <div class="overlay">
-            <textarea :cols="editor.numbersCols" rows="10" readonly></textarea>
-            <textarea
-              ref="overlay"
-              class="code"
-              rows="10"
-              readonly
-              v-model="editor.overlayText"
-            ></textarea>
-          </div>
+        <h1>Dice Roller</h1>
+        <textarea v-model="debugData" rows="10"></textarea><br />
+        <div v-if="diceSides > 9" class="red-800">
+          Dice cannot be greather than 9 sides
         </div>
-        <a v-if="debugUrl" :href="debugUrl" target="_blank"
-          ><i icon="link"></i> Output link</a
+        <a v-if="debugData.length" :href="debugUrl" target="_blank"
+          >Output link</a
         >
         <br />
         <br />
         <hr />
       </div>
-      <!-- TODO: 5. implement custom logic -->
-      <div class="header" v-html="parsed.header"></div>
-      <div v-for="(d, i) in parsed.data" :key="`data-${i}`" v-html="d"></div>
+      <div class="header" v-html="header"></div>
+      <div class="dice">
+        <template v-for="dice, index in dices" :key="`dice-${i}`">
+          <svg
+            class="svg-inline--fa"
+            focusable="false"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 448 512"
+          >
+            <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+            <path fill="currentColor" :d="getDiceSvg(dice)" />
+          </svg>
+        </template>
+      </div>
+      <button
+        v-if="debug || !readonly && !alreadyRolled"
+        @click="roll"
+        :disabled="rolling"
+      >
+        Roll the dice
+      </button>
+      <template v-if="debug || readonly && !alreadyRolled">
+        <div
+          class="green-800"
+          v-if="debug || success"
+          v-html="successText"
+        ></div>
+        <template v-if="debug || !success">
+          <div class="red-800" v-html="failureText"></div>
+        </template>
+      </template>
+      <template v-if="debug || alreadyRolled">
+        <div class="amber-800" v-html="alreadyRolledText"></div>
+      </template>
     </main>
   </body>
 </html>
