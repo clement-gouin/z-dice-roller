@@ -184,9 +184,11 @@ let app = {
       if (this.debug) {
         this.readZData(this.debugData);
       }
-      if (this.alreadyRolled) {
-        this.dices = this.savedData.split(",").map((v) => parseInt(v));
-      }
+      setTimeout(() => {
+        if (this.alreadyRolled) {
+          this.dices = this.savedData.split(",").map((v) => parseInt(v));
+        }
+      });
     },
   },
   beforeMount: function () {
