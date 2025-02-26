@@ -34,14 +34,18 @@ let app = {
     debugUrl() {
       return window.location.pathname + "?z=" + this.encodeData(this.debugData);
     },
+    score() {
+      return this.dices.reduce((s, v) => s + v, 0);
+    },
     success() {
-      return this.dices.reduce((s, v) => s + v, 0) >= this.targetScore;
+      return this.score >= this.targetScore;
+    },
+    savedData() {
+      const url = new URL(window.location);
+      return this.getCookie(url.searchParams.get("z"), null);
     },
     alreadyRolled() {
-      const url = new URL(window.location);
-      return (
-        !this.debug && this.getCookie(url.searchParams.get("z"), null) !== null
-      );
+      return !this.debug && this.savedData !== null;
     },
   },
   watch: {
@@ -60,7 +64,7 @@ let app = {
         if (!this.debug) {
           this.readonly = true;
           const url = new URL(window.location);
-          this.setCookie(url.searchParams.get("z"), "1", 1);
+          this.setCookie(url.searchParams.get("z"), this.dices.join(","), 1);
         }
       }, 1000);
     },
@@ -170,6 +174,9 @@ let app = {
       }
       if (this.debug) {
         this.readZData(this.debugData);
+      }
+      if (this.alreadyRolled) {
+        this.dices = this.savedData.split(",").map((v) => parseInt(v));
       }
     },
   },

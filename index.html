@@ -52,7 +52,10 @@
       >
         Roll the dice
       </button>
-      <template v-if="debug || readonly && !alreadyRolled">
+      <template v-if="debug || alreadyRolled">
+        <div class="amber-800" v-html="alreadyRolledText"></div>
+      </template>
+      <template v-if="debug || readonly || alreadyRolled">
         <div
           class="green-800"
           v-if="debug || success"
@@ -61,9 +64,6 @@
         <template v-if="debug || !success">
           <div class="red-800" v-html="failureText"></div>
         </template>
-      </template>
-      <template v-if="debug || alreadyRolled">
-        <div class="amber-800" v-html="alreadyRolledText"></div>
       </template>
     </main>
   </body>
