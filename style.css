@@ -209,6 +209,9 @@ button:hover {
 
 svg.lucide {
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  vertical-align: text-top;
+}
+
+b .lucide {
+  stroke-width: 3;
 }

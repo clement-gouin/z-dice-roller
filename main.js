@@ -190,6 +190,15 @@ let app = {
         }
       });
     },
+    updateIcons() {
+      lucide.createIcons({
+        nameAttr: "icon",
+        attrs: {
+          width: "1.1em",
+          height: "1.1em",
+        },
+      });
+    },
   },
   beforeMount: function () {
     this.initApp();
@@ -202,17 +211,14 @@ let app = {
         this.updateDices();
       }
     }, 50);
+    this.updateIcons();
+  },
+  updated: function () {
+    this.updateIcons();
   },
 };
 
 window.onload = () => {
   app = Vue.createApp(app);
   app.mount("#app");
-  lucide.createIcons({
-    nameAttr: "icon",
-    attrs: {
-      width: "1.1em",
-      height: "1.1em",
-    },
-  });
 };
