@@ -62,18 +62,21 @@ let app = {
   watch: {
     debugData(value) {
       this.readZData(value);
-      this.updateEditor();
-      this.debugUrl = value.trim().length
-        ? window.location.pathname + "?z=" + this.encodeData(value.trim())
-        : "";
+      this.updateEditor(value);
+      this.updateDebugUrl(value);
     },
   },
   methods: {
     showApp() {
       document.getElementById("app").setAttribute("style", "");
     },
-    updateEditor() {
-      const debugDataSplit = this.debugData.split("\n");
+    updateDebugUrl(value) {
+      this.debugUrl = value.trim().length
+        ? window.location.pathname + "?z=" + this.encodeData(value.trim())
+        : "";
+    },
+    updateEditor(value) {
+      const debugDataSplit = value.split("\n");
       const lines = Array(Math.max(debugDataSplit.length, HELP.length)).fill(0);
       this.editor.numbersText = lines.map((v, i) => `${i + 1}.`).join("\n");
       this.editor.overlayText = lines
@@ -212,7 +215,8 @@ let app = {
       }
       if (this.debug) {
         this.readZData(this.debugData);
-        this.updateEditor();
+        this.updateEditor(this.debugData);
+        this.updateDebugUrl(this.debugData);
       }
       setTimeout(() => {
         if (this.alreadyRolled) {
