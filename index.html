@@ -15,11 +15,34 @@
     <main id="app" style="display: none">
       <div v-if="debug">
         <h1><i icon="dices"></i> Dice Roller</h1>
-        <textarea v-model="debugData" rows="10"></textarea><br />
+        <div class="editor">
+          <textarea
+            class="numbers"
+            :cols="numbersCols"
+            rows="7"
+            readonly
+            ref="numbers"
+          >
+{{ numbersText }}</textarea
+          >
+          <textarea
+            class="code"
+            v-model="debugData"
+            ref="code"
+            rows="7"
+          ></textarea>
+          <div class="overlay">
+            <textarea :cols="numbersCols" rows="7" readonly></textarea>
+            <textarea ref="overlay" class="code" rows="7" readonly>
+              {{ overlayText }}</textarea
+            >
+          </div>
+        </div>
+        <br />
         <div v-if="diceSides > 9" class="red-800">
           Dice cannot be greather than 9 sides
         </div>
-        <a v-if="debugData.length" :href="debugUrl" target="_blank"
+        <a v-if="debugData.trim().length" :href="debugUrl" target="_blank"
           ><i icon="link"></i> Output link</a
         >
         <br />

@@ -12,6 +12,16 @@ const DICES = [
   "M12 12h.01zM16 8h.01zM16 12h.01zM16 16h.01zM8 8h.01zM8 12h.01zM8 16h.01zM12 16h.01zM12 8h.01z",
 ];
 
+const HELP = [
+  "Roll name (html, <h1> on plain text)",
+  "Correct answer (html, <h2> on plain text)",
+  "Incorrect answer (html, <h2> on plain text)",
+  "Dices to roll (as XdY)",
+  "Minimum score to obtain (0+)",
+  "Saved roll expiration in minutes (0+, optional, default to 1 day)",
+  "Roll button text (html, optional)",
+];
+
 let app = {
   data() {
     return {
@@ -29,21 +39,19 @@ let app = {
       dices: [],
       rolling: false,
       expiration: 24 * 60,
+      numbersCols: 0,
+      numbersText: "",
+      overlayText: "",
+      debugUrl: "",
+      savedData: null,
     };
   },
   computed: {
-    debugUrl() {
-      return window.location.pathname + "?z=" + this.encodeData(this.debugData);
-    },
     score() {
       return this.dices.reduce((s, v) => s + v, 0);
     },
     success() {
       return this.score >= this.targetScore;
-    },
-    savedData() {
-      const url = new URL(window.location);
-      return this.getCookie(url.searchParams.get("z"), null);
     },
     alreadyRolled() {
       return !this.debug && this.savedData !== null;
@@ -52,11 +60,31 @@ let app = {
   watch: {
     debugData(value) {
       this.readZData(value);
+      this.updateEditor();
+      this.debugUrl =
+        window.location.pathname + "?z=" + this.encodeData(this.debugData);
     },
   },
   methods: {
     showApp() {
       document.getElementById("app").setAttribute("style", "");
+    },
+    updateEditor() {
+      const debugDataSplit = this.debugData.split("\n");
+      const lines = Array(Math.max(debugDataSplit.length, HELP.length)).fill(0);
+      this.numbersText = lines.map((v, i) => `${i + 1}.`).join("\n");
+      this.overlayText = lines
+        .map((v, i) => {
+          if (debugDataSplit.length > i && debugDataSplit[i].trim().length) {
+            return " ".repeat(debugDataSplit[i].length);
+          }
+          if (HELP.length > i) {
+            return HELP[i];
+          }
+          return "";
+        })
+        .join("\n");
+      this.numbersCols = (lines.length + 1).toString().length + 1;
     },
     roll() {
       this.rolling = true;
@@ -177,9 +205,11 @@ let app = {
       const url = new URL(window.location);
       if (url.searchParams.get("z") !== null) {
         this.debug = this.readZData(this.decodeData(url.searchParams.get("z")));
+        this.savedData = this.getCookie(url.searchParams.get("z"), null);
       }
       if (this.debug) {
         this.readZData(this.debugData);
+        this.updateEditor();
       }
       setTimeout(() => {
         if (this.alreadyRolled) {
@@ -209,6 +239,11 @@ let app = {
       }
     }, 50);
     this.updateIcons();
+    this.$refs.code?.addEventListener("scroll", () => {
+      this.$refs.numbers.scrollTop = this.$refs.code.scrollTop;
+      this.$refs.overlay.scrollTop = this.$refs.code.scrollTop;
+      this.$refs.overlay.scrollLeft = this.$refs.code.scrollLeft;
+    });
   },
   updated: function () {
     this.updateIcons();
