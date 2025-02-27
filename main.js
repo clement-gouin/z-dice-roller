@@ -90,7 +90,7 @@ let app = {
           return "";
         })
         .join("\n");
-      this.editor.numbersCols = (lines.length + 1).toString().length + 1;
+      this.editor.numbersCols = lines.length.toString().length + 1;
     },
     roll() {
       this.rolling = true;
