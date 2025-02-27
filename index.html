@@ -18,12 +18,12 @@
         <div class="editor">
           <textarea
             class="numbers"
-            :cols="numbersCols"
+            :cols="editor.numbersCols"
             rows="7"
             readonly
             ref="numbers"
           >
-{{ numbersText }}</textarea
+{{ editor.numbersText }}</textarea
           >
           <textarea
             class="code"
@@ -32,9 +32,9 @@
             rows="7"
           ></textarea>
           <div class="overlay">
-            <textarea :cols="numbersCols" rows="7" readonly></textarea>
+            <textarea :cols="editor.numbersCols" rows="7" readonly></textarea>
             <textarea ref="overlay" class="code" rows="7" readonly>
-              {{ overlayText }}</textarea
+              {{ editor.overlayText }}</textarea
             >
           </div>
         </div>

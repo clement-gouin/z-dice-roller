@@ -39,11 +39,13 @@ let app = {
       dices: [],
       rolling: false,
       expiration: 24 * 60,
-      numbersCols: 0,
-      numbersText: "",
-      overlayText: "",
       debugUrl: "",
       savedData: null,
+      editor: {
+        numbersCols: 0,
+        numbersText: "",
+        overlayText: "",
+      },
     };
   },
   computed: {
@@ -72,8 +74,8 @@ let app = {
     updateEditor() {
       const debugDataSplit = this.debugData.split("\n");
       const lines = Array(Math.max(debugDataSplit.length, HELP.length)).fill(0);
-      this.numbersText = lines.map((v, i) => `${i + 1}.`).join("\n");
-      this.overlayText = lines
+      this.editor.numbersText = lines.map((v, i) => `${i + 1}.`).join("\n");
+      this.editor.overlayText = lines
         .map((v, i) => {
           if (debugDataSplit.length > i && debugDataSplit[i].trim().length) {
             return " ".repeat(debugDataSplit[i].length);
@@ -84,7 +86,7 @@ let app = {
           return "";
         })
         .join("\n");
-      this.numbersCols = (lines.length + 1).toString().length + 1;
+      this.editor.numbersCols = (lines.length + 1).toString().length + 1;
     },
     roll() {
       this.rolling = true;
