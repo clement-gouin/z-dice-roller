@@ -6,25 +6,21 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/lz-string@1.5/libs/lz-string.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script type="text/javascript" src="main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script
-      defer
-      src="https://use.fontawesome.com/releases/v6.7.2/js/all.js"
-      crossorigin="anonymous"
-    ></script>
     <link rel="stylesheet" href="material-colors.css" />
   </head>
   <body>
     <main id="app" style="display: none">
       <div v-if="debug">
-        <h1>Dice Roller</h1>
+        <h1><i icon="dices"></i> Dice Roller</h1>
         <textarea v-model="debugData" rows="10"></textarea><br />
         <div v-if="diceSides > 9" class="red-800">
           Dice cannot be greather than 9 sides
         </div>
         <a v-if="debugData.length" :href="debugUrl" target="_blank"
-          >Output link</a
+          ><i icon="link"></i> Output link</a
         >
         <br />
         <br />
@@ -34,14 +30,18 @@
       <div class="dice">
         <template v-for="dice, index in dices" :key="`dice-${index}`">
           <svg
-            class="svg-inline--fa"
-            focusable="false"
-            role="img"
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 448 512"
+            width="192"
+            height="192"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-            <path fill="currentColor" :d="getDiceSvg(dice)" />
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+            <path :d="getDiceSvg(dice)" />
           </svg>
         </template>
       </div>
@@ -50,7 +50,7 @@
         @click="roll"
         :disabled="rolling"
       >
-        Roll the dice
+        <i icon="dices"></i> Roll the dice
       </button>
       <template v-if="debug || alreadyRolled">
         <div class="amber-800" v-html="alreadyRolledText"></div>
