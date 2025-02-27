@@ -22,9 +22,8 @@
             rows="7"
             readonly
             ref="numbers"
-          >
-{{ editor.numbersText }}</textarea
-          >
+            v-model="editor.numbersText"
+          ></textarea>
           <textarea
             class="code"
             v-model="debugData"
@@ -33,9 +32,13 @@
           ></textarea>
           <div class="overlay">
             <textarea :cols="editor.numbersCols" rows="7" readonly></textarea>
-            <textarea ref="overlay" class="code" rows="7" readonly>
-              {{ editor.overlayText }}</textarea
-            >
+            <textarea
+              ref="overlay"
+              class="code"
+              rows="7"
+              readonly
+              v-model="editor.overlayText"
+            ></textarea>
           </div>
         </div>
         <div v-if="diceSides > 9" class="red-800">
