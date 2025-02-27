@@ -63,8 +63,9 @@ let app = {
     debugData(value) {
       this.readZData(value);
       this.updateEditor();
-      this.debugUrl =
-        window.location.pathname + "?z=" + this.encodeData(this.debugData);
+      this.debugUrl = value.trim().length
+        ? window.location.pathname + "?z=" + this.encodeData(value.trim())
+        : "";
     },
   },
   methods: {
