@@ -7,15 +7,15 @@
 
 Format is made line by line
 
-Header (5-6 lines):
+Header (5-8 lines):
 ```txt
 1   Roll name (html, <h1> on plain text)
 2   Correct answer (html, <h2> on plain text)
 3   Incorrect answer (html, <h2> on plain text)
 4   Dices to roll (as XdY)
 5   Minimum score to obtain (0+)
-6   Saved roll expiration in minutes (0+, default to 1 day)
-7   Already rolled text (html, optional, <h2> on plain text)
+6?  Saved roll expiration in minutes (0+, default to 1 day)
+7?  Roll button text (html, optional)
 ```
 
 ## Samples
@@ -29,12 +29,13 @@ You fail !
 ```
 
 ```txt
-Try to make a double six
-You did it !
-Try again in a minute !
+<h1>Try to make a <i icon="dice-6"></i><i icon="dice-6"></i></h1>
+The gods of dice are with you!
+Try again in a minute!
 2d6
 12
 1
+<i icon='dices'></i><i icon='dices'></i> Try my luck
 ```
 
 

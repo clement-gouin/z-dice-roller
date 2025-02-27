@@ -49,12 +49,8 @@
         v-if="debug || !readonly && !alreadyRolled"
         @click="roll"
         :disabled="rolling"
-      >
-        <i icon="dices"></i> Roll the dice
-      </button>
-      <template v-if="debug || alreadyRolled">
-        <div class="amber-800" v-html="alreadyRolledText"></div>
-      </template>
+        v-html="buttonText"
+      ></button>
       <template v-if="debug || readonly || alreadyRolled">
         <div
           class="green-800"

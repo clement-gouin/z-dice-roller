@@ -22,7 +22,7 @@ let app = {
       header: "",
       successText: "",
       failureText: "",
-      alreadyRolledText: "<h2>You already rolled the dice</h2>",
+      buttonText: "<i icon='dices'></i> Roll the dice",
       diceCount: 1,
       diceSides: 6,
       targetScore: 0,
@@ -147,10 +147,7 @@ let app = {
         }
       }
       if (parts.length) {
-        this.alreadyRolledText = parts.shift();
-        if (!/<[^>]*>/.test(this.alreadyRolledText)) {
-          this.alreadyRolledText = `<h2>${this.alreadyRolledText}</h2>`;
-        }
+        this.buttonText = parts.shift();
       }
       return false;
     },
