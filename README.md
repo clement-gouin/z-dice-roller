@@ -18,7 +18,7 @@ Header (5-6 lines):
 7   Already rolled text (html, optional, <h2> on plain text)
 ```
 
-## Sample
+## Samples
 
 ```txt
 Gambling time
@@ -27,6 +27,16 @@ You fail !
 2d6
 6
 ```
+
+```txt
+Try to make a double six
+You did it !
+Try again in a minute !
+2d6
+12
+1
+```
+
 
 ## Tips
 
