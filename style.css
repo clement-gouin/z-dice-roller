@@ -181,7 +181,7 @@ APP STYLE
   margin: 0 0.05em;
 }
 
-button {
+.button {
   display: block;
   width: 100%;
   text-decoration: none;
@@ -194,7 +194,7 @@ button {
   font-size: 1.333em;
 }
 
-button:hover {
+.button:hover {
   background-color: var(--background-secondary);
 }
 

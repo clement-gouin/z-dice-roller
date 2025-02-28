@@ -78,6 +78,7 @@
         </template>
       </div>
       <button
+        class="button"
         v-if="debug || !readonly && !alreadyRolled"
         @click="roll"
         :disabled="rolling"
