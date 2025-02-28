@@ -1,3 +1,5 @@
+import { createApp } from "vue";
+
 const DICES = [
   "M12 12h.01z",
   "M16 16h.01zM8 8h.01z",
@@ -68,7 +70,7 @@ const utils = {
   },
 };
 
-const app = {
+const app = createApp({
   data() {
     return {
       debug: true,
@@ -113,6 +115,21 @@ const app = {
       this.updateEditor(value);
       this.updateDebugUrl(value);
     },
+  },
+  beforeMount() {
+    this.initApp();
+  },
+  mounted() {
+    setTimeout(this.showApp);
+    setInterval(() => {
+      if (this.rolling) {
+        this.updateDices();
+      }
+    }, 50);
+    this.updateIcons();
+  },
+  updated() {
+    this.updateIcons();
   },
   methods: {
     showApp() {
@@ -248,23 +265,8 @@ const app = {
       return DICES[Math.min(value, DICES.length) - 1];
     },
   },
-  beforeMount() {
-    this.initApp();
-  },
-  mounted() {
-    setTimeout(this.showApp);
-    setInterval(() => {
-      if (this.rolling) {
-        this.updateDices();
-      }
-    }, 50);
-    this.updateIcons();
-  },
-  updated() {
-    this.updateIcons();
-  },
-};
+});
 
 window.onload = () => {
-  Vue.createApp(app).mount("#app");
+  app.mount("#app");
 };

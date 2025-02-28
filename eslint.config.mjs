@@ -1,27 +1,21 @@
+import eslintConfigPrettier from "eslint-config-prettier";
 import globals from "globals";
 import pluginJs from "@eslint/js";
+import pluginVue from "eslint-plugin-vue";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    files: ["main.js"],
     languageOptions: {
-      sourceType: "script",
       globals: {
         ...globals.browser,
-        Vue: "readonly",
-        LZString: "readonly",
         lucide: "readonly",
-      },
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-          impliedStrict: true,
-        },
+        LZString: "readonly",
       },
     },
   },
   pluginJs.configs.all,
+  ...pluginVue.configs["flat/recommended"],
   {
     rules: {
       "no-magic-numbers": "off",
@@ -31,4 +25,5 @@ export default [
       "max-statements": ["warn", 50],
     },
   },
+  eslintConfigPrettier,
 ];
