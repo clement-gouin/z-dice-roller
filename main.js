@@ -1,5 +1,3 @@
-/* exported app */
-
 const DICES = [
   "M12 12h.01z",
   "M16 16h.01zM8 8h.01z",
