@@ -19,7 +19,7 @@
           <textarea
             class="numbers"
             :cols="editor.numbersCols"
-            rows="7"
+            rows="10"
             readonly
             ref="numbers"
             v-model="editor.numbersText"
@@ -28,14 +28,15 @@
             class="code"
             v-model="debugData"
             ref="code"
-            rows="7"
+            rows="10"
+            @scroll="editorScroll"
           ></textarea>
           <div class="overlay">
-            <textarea :cols="editor.numbersCols" rows="7" readonly></textarea>
+            <textarea :cols="editor.numbersCols" rows="10" readonly></textarea>
             <textarea
               ref="overlay"
               class="code"
-              rows="7"
+              rows="10"
               readonly
               v-model="editor.overlayText"
             ></textarea>

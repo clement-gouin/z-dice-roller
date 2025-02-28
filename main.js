@@ -24,13 +24,13 @@ const HELP = [
 
 const utils = {
   base64URLTobase64(str) {
-    const base64Encoded = str.replace(/-/g, "+").replace(/_/g, "/");
+    const base64Encoded = str.replace(/-/gu, "+").replace(/_/gu, "/");
     const padding =
       str.length % 4 === 0 ? "" : "=".repeat(4 - (str.length % 4));
     return base64Encoded + padding;
   },
   base64tobase64URL(str) {
-    return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    return str.replace(/\+/gu, "-").replace(/\//gu, "_").replace(/[=]+$/u, "");
   },
   decodeData(str) {
     return LZString.decompressFromBase64(
@@ -45,23 +45,22 @@ const utils = {
       .join("");
   },
   setCookie(cname, cvalue, minutes) {
-    const d = new Date();
-    d.setTime(d.getTime() + minutes * 60 * 1000);
-    let expires = "expires=" + d.toUTCString();
-    console.log(cname + "=" + cvalue + "; path=/; " + expires);
-    document.cookie = cname + "=" + cvalue + "; path=/; " + expires;
+    const date = new Date();
+    date.setTime(date.getTime() + minutes * 60 * 1000);
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${cname}=${cvalue}; path=/; ${expires}`;
   },
   getCookie(cname, defaultValue) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == " ") {
-        c = c.substring(1);
+    const name = `${cname}=`;
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookies = decodedCookie.split(";");
+    for (let index = 0; index < cookies.length; index += 1) {
+      let cookie = cookies[index];
+      while (cookie.charAt(0) === " ") {
+        cookie = cookie.substring(1);
       }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
+      if (cookie.indexOf(name) === 0) {
+        return cookie.substring(name.length, cookie.length);
       }
     }
     return defaultValue;
@@ -71,7 +70,7 @@ const utils = {
   },
 };
 
-let app = {
+const app = {
   data() {
     return {
       debug: true,
@@ -101,7 +100,7 @@ let app = {
   },
   computed: {
     score() {
-      return this.dices.reduce((s, v) => s + v, 0);
+      return this.dices.reduce((sum, value) => sum + value, 0);
     },
     success() {
       return this.score >= this.parsed.targetScore;
@@ -136,7 +135,9 @@ let app = {
       }
       setTimeout(() => {
         if (this.alreadyRolled) {
-          this.dices = this.savedData.split(",").map((v) => parseInt(v));
+          this.dices = this.savedData
+            .split(",")
+            .map((value) => parseInt(value, 10));
         }
       });
     },
@@ -151,27 +152,35 @@ let app = {
     },
     updateDebugUrl(value) {
       this.debugUrl = value.trim().length
-        ? window.location.pathname + "?z=" + utils.encodeData(value.trim())
+        ? `${window.location.pathname}?z=${utils.encodeData(value.trim())}`
         : "";
     },
     updateEditor(value) {
       const debugDataSplit = value.split("\n");
       const lines = Array(Math.max(debugDataSplit.length, HELP.length)).fill(0);
       this.editor.numbersText = debugDataSplit
-        .map((v, i) => `${i + 1}.`)
+        .map((_value, index) => `${index + 1}.`)
         .join("\n");
       this.editor.overlayText = lines
-        .map((v, i) => {
-          if (debugDataSplit.length > i && debugDataSplit[i].trim().length) {
-            return " ".repeat(debugDataSplit[i].length);
+        .map((_value, index) => {
+          if (
+            debugDataSplit.length > index &&
+            debugDataSplit[index].trim().length
+          ) {
+            return " ".repeat(debugDataSplit[index].length);
           }
-          if (HELP.length > i) {
-            return HELP[i];
+          if (HELP.length > index) {
+            return HELP[index];
           }
           return "";
         })
         .join("\n");
       this.editor.numbersCols = lines.length.toString().length + 1;
+    },
+    editorScroll() {
+      this.$refs.numbers.scrollTop = this.$refs.code.scrollTop;
+      this.$refs.overlay.scrollTop = this.$refs.code.scrollTop;
+      this.$refs.overlay.scrollLeft = this.$refs.code.scrollLeft;
     },
     readZData(str) {
       this.debugData = str;
@@ -180,35 +189,35 @@ let app = {
         return true;
       }
       this.parsed.header = parts.shift();
-      if (!/<[^>]*>/.test(this.parsed.header)) {
+      if (!/<[^>]*>/u.test(this.parsed.header)) {
         this.parsed.header = `<h1>${this.parsed.header}</h1>`;
       }
       this.parsed.successText = parts.shift();
-      if (!/<[^>]*>/.test(this.parsed.successText)) {
+      if (!/<[^>]*>/u.test(this.parsed.successText)) {
         this.parsed.successText = `<h2>${this.parsed.successText}</h2>`;
       }
       this.parsed.failureText = parts.shift();
-      if (!/<[^>]*>/.test(this.parsed.failureText)) {
+      if (!/<[^>]*>/u.test(this.parsed.failureText)) {
         this.parsed.failureText = `<h2>${this.parsed.failureText}</h2>`;
       }
       this.parsed.diceCount = 1;
       this.parsed.diceSides = 6;
       const rawDice = parts.shift();
-      if (/^\d+d\d$/.test(rawDice)) {
-        this.parsed.diceCount = parseInt(rawDice.split("d")[0]);
-        this.parsed.diceSides = parseInt(rawDice.split("d")[1]);
+      if (/^\d+d\d$/u.test(rawDice)) {
+        this.parsed.diceCount = parseInt(rawDice.split("d")[0], 10);
+        this.parsed.diceSides = parseInt(rawDice.split("d")[1], 10);
       }
       this.dices = Array(this.parsed.diceCount).fill(this.parsed.diceSides);
       this.parsed.targetScore = 0;
       const rawTarget = parts.shift();
-      if (/^\d+$/.test(rawTarget)) {
-        this.parsed.targetScore = parseInt(rawTarget);
+      if (/^\d+$/u.test(rawTarget)) {
+        this.parsed.targetScore = parseInt(rawTarget, 10);
       }
       this.parsed.expiration = 24 * 60;
       if (parts.length) {
         const rawExpiration = parts.shift();
-        if (!/^\d+$/.test(rawExpiration)) {
-          this.parsed.expiration = parseInt(rawExpiration);
+        if (!/^\d+$/u.test(rawExpiration)) {
+          this.parsed.expiration = parseInt(rawExpiration, 10);
         }
       }
       this.parsed.buttonText = "<i icon='dices'></i> Roll the dice";
@@ -241,11 +250,10 @@ let app = {
       return DICES[Math.min(value, DICES.length) - 1];
     },
   },
-  beforeMount: function () {
+  beforeMount() {
     this.initApp();
   },
-  mounted: function () {
-    console.log("app mounted");
+  mounted() {
     setTimeout(this.showApp);
     setInterval(() => {
       if (this.rolling) {
@@ -253,18 +261,12 @@ let app = {
       }
     }, 50);
     this.updateIcons();
-    this.$refs.code?.addEventListener("scroll", () => {
-      this.$refs.numbers.scrollTop = this.$refs.code.scrollTop;
-      this.$refs.overlay.scrollTop = this.$refs.code.scrollTop;
-      this.$refs.overlay.scrollLeft = this.$refs.code.scrollLeft;
-    });
   },
-  updated: function () {
+  updated() {
     this.updateIcons();
   },
 };
 
 window.onload = () => {
-  app = Vue.createApp(app);
-  app.mount("#app");
+  Vue.createApp(app).mount("#app");
 };

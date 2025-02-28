@@ -1,23 +1,21 @@
 {
-  "name": "z-app",
+  "name": "dice-roller",
   "version": "1.0.0",
-  "description": "*Working template for URL encoded app*",
+  "description": "*When rolling decides your fate*",
   "scripts": {
     "lint": "eslint",
     "fix": "eslint --fix"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/clement-gouin/z-app.git"
+    "url": "git+https://github.com/clement-gouin/dice-roller.git"
   },
   "author": "clement-gouin",
   "license": "ISC",
-  "homepage": "https://github.com/clement-gouin/z-app#readme",
+  "homepage": "https://github.com/clement-gouin/dice-roller#readme",
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "eslint": "^9.21.0",
-    "eslint-config-prettier": "^10.0.2",
-    "eslint-plugin-vue": "^9.32.0",
     "globals": "^16.0.0"
   }
 }
