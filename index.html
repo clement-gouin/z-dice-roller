@@ -48,7 +48,7 @@
             ></textarea>
           </div>
         </div>
-        <div v-if="diceSides > 9" class="red-800">
+        <div v-if="parsed.diceSides > 9" class="red-800">
           Dice cannot be greather than 9 sides
         </div>
         <a v-if="debugUrl" :href="debugUrl" target="_blank"
