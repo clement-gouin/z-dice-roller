@@ -203,7 +203,7 @@ const app = createApp({
     readZData(str) {
       this.debugData = str;
       this.parsed = utils.clone(DEFAULT_VALUES);
-      const parts = str.trim().split("\n");
+      const parts = str.split("\n");
       if (parts.length < 5) {
         return true;
       }
