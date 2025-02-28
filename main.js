@@ -53,6 +53,9 @@ const utils = {
       .reverse()
       .join("");
   },
+  clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  },
   setCookie(cname, cvalue, minutes) {
     const date = new Date();
     date.setTime(date.getTime() + minutes * 60 * 1000);
@@ -199,7 +202,7 @@ const app = createApp({
     },
     readZData(str) {
       this.debugData = str;
-      this.parsed = DEFAULT_VALUES;
+      this.parsed = utils.clone(DEFAULT_VALUES);
       const parts = str.trim().split("\n");
       if (parts.length < 5) {
         return true;
