@@ -14,13 +14,62 @@ const DICES = [
 
 const HELP = [
   "Roll name (html, <h1> on plain text)",
-  "Correct answer (html, <h2> on plain text)",
-  "Incorrect answer (html, <h2> on plain text)",
+  "Success message (html, <h2> on plain text)",
+  "Failure message (html, <h2> on plain text)",
   "Dices to roll (as XdY)",
   "Minimum score to obtain (0+)",
-  "Saved roll expiration in minutes (0+, optional, default to 1 day)",
+  "Saved roll expiration in minutes (0+, optional, default to 1440 minutes)",
   "Roll button text (html, optional)",
 ];
+
+const utils = {
+  base64URLTobase64(str) {
+    const base64Encoded = str.replace(/-/g, "+").replace(/_/g, "/");
+    const padding =
+      str.length % 4 === 0 ? "" : "=".repeat(4 - (str.length % 4));
+    return base64Encoded + padding;
+  },
+  base64tobase64URL(str) {
+    return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  },
+  decodeData(str) {
+    return LZString.decompressFromBase64(
+      utils.base64URLTobase64(str.split("").reverse().join(""))
+    );
+  },
+  encodeData(str) {
+    return utils
+      .base64tobase64URL(LZString.compressToBase64(str))
+      .split("")
+      .reverse()
+      .join("");
+  },
+  setCookie(cname, cvalue, minutes) {
+    const d = new Date();
+    d.setTime(d.getTime() + minutes * 60 * 1000);
+    let expires = "expires=" + d.toUTCString();
+    console.log(cname + "=" + cvalue + "; path=/; " + expires);
+    document.cookie = cname + "=" + cvalue + "; path=/; " + expires;
+  },
+  getCookie(cname, defaultValue) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == " ") {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return defaultValue;
+  },
+  randRange(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  },
+};
 
 let app = {
   data() {
@@ -28,24 +77,26 @@ let app = {
       debug: true,
       debugData:
         "Gambling time\n<h2>Have a <a href='https://orteil.dashnet.org/cookieclicker/'>cookie</a> !</h2>\nYou fail !\n2d6\n6",
-      readonly: false,
-      header: "",
-      successText: "",
-      failureText: "",
-      buttonText: "<i icon='dices'></i> Roll the dice",
-      diceCount: 1,
-      diceSides: 6,
-      targetScore: 0,
-      dices: [],
-      rolling: false,
-      expiration: 24 * 60,
       debugUrl: "",
-      savedData: null,
       editor: {
         numbersCols: 0,
         numbersText: "",
         overlayText: "",
       },
+      parsed: {
+        header: "",
+        successText: "",
+        failureText: "",
+        diceCount: 1,
+        diceSides: 6,
+        targetScore: 0,
+        expiration: 24 * 60,
+        buttonText: "<i icon='dices'></i> Roll the dice",
+      },
+      readonly: false,
+      dices: [],
+      rolling: false,
+      savedData: null,
     };
   },
   computed: {
@@ -53,7 +104,7 @@ let app = {
       return this.dices.reduce((s, v) => s + v, 0);
     },
     success() {
-      return this.score >= this.targetScore;
+      return this.score >= this.parsed.targetScore;
     },
     alreadyRolled() {
       return !this.debug && this.savedData !== null;
@@ -70,148 +121,13 @@ let app = {
     showApp() {
       document.getElementById("app").setAttribute("style", "");
     },
-    updateDebugUrl(value) {
-      this.debugUrl = value.trim().length
-        ? window.location.pathname + "?z=" + this.encodeData(value.trim())
-        : "";
-    },
-    updateEditor(value) {
-      const debugDataSplit = value.split("\n");
-      const lines = Array(Math.max(debugDataSplit.length, HELP.length)).fill(0);
-      this.editor.numbersText = lines.map((v, i) => `${i + 1}.`).join("\n");
-      this.editor.overlayText = lines
-        .map((v, i) => {
-          if (debugDataSplit.length > i && debugDataSplit[i].trim().length) {
-            return " ".repeat(debugDataSplit[i].length);
-          }
-          if (HELP.length > i) {
-            return HELP[i];
-          }
-          return "";
-        })
-        .join("\n");
-      this.editor.numbersCols = lines.length.toString().length + 1;
-    },
-    roll() {
-      this.rolling = true;
-      setTimeout(() => {
-        this.rolling = false;
-        if (!this.debug) {
-          this.readonly = true;
-          const url = new URL(window.location);
-          this.setCookie(url.searchParams.get("z"), this.dices.join(","), 1);
-        }
-      }, 1000);
-    },
-    updateDices() {
-      this.dices = this.dices.map(() => this.randRange(1, this.diceSides + 1));
-    },
-    randRange(min, max) {
-      return Math.floor(Math.random() * (max - min) + min);
-    },
-    base64URLTobase64(str) {
-      const base64Encoded = str.replace(/-/g, "+").replace(/_/g, "/");
-      const padding =
-        str.length % 4 === 0 ? "" : "=".repeat(4 - (str.length % 4));
-      return base64Encoded + padding;
-    },
-    base64tobase64URL(str) {
-      return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-    },
-    decodeData(str) {
-      return LZString.decompressFromBase64(
-        this.base64URLTobase64(str.split("").reverse().join(""))
-      );
-    },
-    encodeData(str) {
-      return this.base64tobase64URL(LZString.compressToBase64(str))
-        .split("")
-        .reverse()
-        .join("");
-    },
-    normalize(str) {
-      return str
-        .trim()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase();
-    },
-    getDiceSvg(value) {
-      return DICES[Math.min(value, DICES.length) - 1];
-    },
-    readZData(str) {
-      this.debugData = str;
-      const parts = str.trim().split("\n");
-      if (parts.length < 5) {
-        return true;
-      }
-      this.header = parts.shift();
-      if (!/<[^>]*>/.test(this.header)) {
-        this.header = `<h1>${this.header}</h1>`;
-      }
-      this.successText = parts.shift();
-      if (!/<[^>]*>/.test(this.successText)) {
-        this.successText = `<h2>${this.successText}</h2>`;
-      }
-      this.failureText = parts.shift();
-      if (!/<[^>]*>/.test(this.failureText)) {
-        this.failureText = `<h2>${this.failureText}</h2>`;
-      }
-      const rawDice = parts.shift();
-      if (!/^\d+d\d$/.test(rawDice)) {
-        this.diceCount = 1;
-        this.diceSides = 6;
-      } else {
-        this.diceCount = parseInt(rawDice.split("d")[0]);
-        this.diceSides = parseInt(rawDice.split("d")[1]);
-      }
-      this.dices = new Array(this.diceCount).fill(this.diceSides);
-      const rawTarget = parts.shift();
-      if (!/^\d+$/.test(rawTarget)) {
-        this.targetScore = 0;
-      } else {
-        this.targetScore = parseInt(rawTarget);
-      }
-      if (parts.length) {
-        const rawExpiration = parts.shift();
-        if (!/^\d+$/.test(rawExpiration)) {
-          this.expiration = 24 * 60;
-        } else {
-          this.expiration = parseInt(rawExpiration);
-        }
-      }
-      if (parts.length) {
-        this.buttonText = parts.shift();
-      }
-      return false;
-    },
-    setCookie(cname, cvalue) {
-      const d = new Date();
-      d.setTime(d.getTime() + this.expiration * 60 * 1000);
-      let expires = "expires=" + d.toUTCString();
-      console.log(cname + "=" + cvalue + "; path=/; " + expires);
-      document.cookie = cname + "=" + cvalue + "; path=/; " + expires;
-    },
-    getCookie(cname, defaultValue) {
-      let name = cname + "=";
-      let decodedCookie = decodeURIComponent(document.cookie);
-      let ca = decodedCookie.split(";");
-      for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == " ") {
-          c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-          return c.substring(name.length, c.length);
-        }
-      }
-      return defaultValue;
-    },
     initApp() {
       const url = new URL(window.location);
       if (url.searchParams.get("z") !== null) {
-        this.debug = this.readZData(this.decodeData(url.searchParams.get("z")));
-        this.savedData = this.getCookie(url.searchParams.get("z"), null);
+        this.debug = this.readZData(
+          utils.decodeData(url.searchParams.get("z"))
+        );
+        this.savedData = utils.getCookie(url.searchParams.get("z"), null);
       }
       if (this.debug) {
         this.readZData(this.debugData);
@@ -232,6 +148,97 @@ let app = {
           height: "1.1em",
         },
       });
+    },
+    updateDebugUrl(value) {
+      this.debugUrl = value.trim().length
+        ? window.location.pathname + "?z=" + utils.encodeData(value.trim())
+        : "";
+    },
+    updateEditor(value) {
+      const debugDataSplit = value.split("\n");
+      const lines = Array(Math.max(debugDataSplit.length, HELP.length)).fill(0);
+      this.editor.numbersText = debugDataSplit
+        .map((v, i) => `${i + 1}.`)
+        .join("\n");
+      this.editor.overlayText = lines
+        .map((v, i) => {
+          if (debugDataSplit.length > i && debugDataSplit[i].trim().length) {
+            return " ".repeat(debugDataSplit[i].length);
+          }
+          if (HELP.length > i) {
+            return HELP[i];
+          }
+          return "";
+        })
+        .join("\n");
+      this.editor.numbersCols = lines.length.toString().length + 1;
+    },
+    readZData(str) {
+      this.debugData = str;
+      const parts = str.trim().split("\n");
+      if (parts.length < 5) {
+        return true;
+      }
+      this.parsed.header = parts.shift();
+      if (!/<[^>]*>/.test(this.parsed.header)) {
+        this.parsed.header = `<h1>${this.parsed.header}</h1>`;
+      }
+      this.parsed.successText = parts.shift();
+      if (!/<[^>]*>/.test(this.parsed.successText)) {
+        this.parsed.successText = `<h2>${this.parsed.successText}</h2>`;
+      }
+      this.parsed.failureText = parts.shift();
+      if (!/<[^>]*>/.test(this.parsed.failureText)) {
+        this.parsed.failureText = `<h2>${this.parsed.failureText}</h2>`;
+      }
+      this.parsed.diceCount = 1;
+      this.parsed.diceSides = 6;
+      const rawDice = parts.shift();
+      if (/^\d+d\d$/.test(rawDice)) {
+        this.parsed.diceCount = parseInt(rawDice.split("d")[0]);
+        this.parsed.diceSides = parseInt(rawDice.split("d")[1]);
+      }
+      this.dices = Array(this.parsed.diceCount).fill(this.parsed.diceSides);
+      this.parsed.targetScore = 0;
+      const rawTarget = parts.shift();
+      if (/^\d+$/.test(rawTarget)) {
+        this.parsed.targetScore = parseInt(rawTarget);
+      }
+      this.parsed.expiration = 24 * 60;
+      if (parts.length) {
+        const rawExpiration = parts.shift();
+        if (!/^\d+$/.test(rawExpiration)) {
+          this.parsed.expiration = parseInt(rawExpiration);
+        }
+      }
+      this.parsed.buttonText = "<i icon='dices'></i> Roll the dice";
+      if (parts.length) {
+        this.parsed.buttonText = parts.shift();
+      }
+      return false;
+    },
+    roll() {
+      this.rolling = true;
+      setTimeout(() => {
+        this.rolling = false;
+        if (!this.debug) {
+          this.readonly = true;
+          const url = new URL(window.location);
+          utils.setCookie(
+            url.searchParams.get("z"),
+            this.dices.join(","),
+            this.parsed.expiration
+          );
+        }
+      }, 1000);
+    },
+    updateDices() {
+      this.dices = this.dices.map(() =>
+        utils.randRange(1, this.parsed.diceSides + 1)
+      );
+    },
+    getDiceSvg(value) {
+      return DICES[Math.min(value, DICES.length) - 1];
     },
   },
   beforeMount: function () {

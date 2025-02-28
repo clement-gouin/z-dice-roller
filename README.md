@@ -10,11 +10,11 @@ Format is made line by line
 Header (5-8 lines):
 ```txt
 1   Roll name (html, <h1> on plain text)
-2   Correct answer (html, <h2> on plain text)
-3   Incorrect answer (html, <h2> on plain text)
+2   Success message (html, <h2> on plain text)
+3   Failure message (html, <h2> on plain text)
 4   Dices to roll (as XdY)
 5   Minimum score to obtain (0+)
-6?  Saved roll expiration in minutes (0+, optional, default to 1 day)
+6?  Saved roll expiration in minutes (0+, optional, default to 1440 minutes)
 7?  Roll button text (html, optional)
 ```
 
@@ -38,6 +38,10 @@ Try again in a minute!
 <i icon='dices'></i><i icon='dices'></i> Try my luck
 ```
 
+## TODO
+
+* [ ] Better roll animation ?
+* [ ] Handle better roll text (2d2 + 1d3 + 1 > 5)
 
 ## Tips
 

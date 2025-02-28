@@ -51,7 +51,7 @@
         <br />
         <hr />
       </div>
-      <div class="header" v-html="header"></div>
+      <div class="header" v-html="parsed.header"></div>
       <div class="dice">
         <template v-for="dice, index in dices" :key="`dice-${index}`">
           <svg
@@ -74,16 +74,16 @@
         v-if="debug || !readonly && !alreadyRolled"
         @click="roll"
         :disabled="rolling"
-        v-html="buttonText"
+        v-html="parsed.buttonText"
       ></button>
       <template v-if="debug || readonly || alreadyRolled">
         <div
           class="green-800"
           v-if="debug || success"
-          v-html="successText"
+          v-html="parsed.successText"
         ></div>
         <template v-if="debug || !success">
-          <div class="red-800" v-html="failureText"></div>
+          <div class="red-800" v-html="parsed.failureText"></div>
         </template>
       </template>
     </main>
