@@ -11,7 +11,6 @@ const DICES = [
   "M16 8h.01zM16 12h.01zM16 16h.01zM8 8h.01zM8 12h.01zM8 16h.01zM12 10h.01zM12 14h.01z",
   "M12 12h.01zM16 8h.01zM16 12h.01zM16 16h.01zM8 8h.01zM8 12h.01zM8 16h.01zM12 16h.01zM12 8h.01z",
 ];
-
 const HELP = [
   "Roll name (html, <h1> on plain text)",
   "Success message (html, <h2> on plain text)",
@@ -21,6 +20,16 @@ const HELP = [
   "Saved roll expiration in minutes (0+, optional, default to 1440 minutes)",
   "Roll button text (html, optional)",
 ];
+const DEFAULT_VALUES = {
+  header: "",
+  successText: "",
+  failureText: "",
+  diceCount: 1,
+  diceSides: 6,
+  targetScore: 0,
+  expiration: 24 * 60,
+  buttonText: "<i icon='dices'></i> Roll the dice",
+};
 
 const utils = {
   base64URLTobase64(str) {
@@ -82,16 +91,7 @@ const app = createApp({
         numbersText: "",
         overlayText: "",
       },
-      parsed: {
-        header: "",
-        successText: "",
-        failureText: "",
-        diceCount: 1,
-        diceSides: 6,
-        targetScore: 0,
-        expiration: 24 * 60,
-        buttonText: "<i icon='dices'></i> Roll the dice",
-      },
+      parsed: DEFAULT_VALUES,
       readonly: false,
       dices: [],
       rolling: false,
@@ -199,6 +199,7 @@ const app = createApp({
     },
     readZData(str) {
       this.debugData = str;
+      this.parsed = DEFAULT_VALUES;
       const parts = str.trim().split("\n");
       if (parts.length < 5) {
         return true;
@@ -215,27 +216,22 @@ const app = createApp({
       if (!/<[^>]*>/u.test(this.parsed.failureText)) {
         this.parsed.failureText = `<h2>${this.parsed.failureText}</h2>`;
       }
-      this.parsed.diceCount = 1;
-      this.parsed.diceSides = 6;
       const rawDice = parts.shift();
       if (/^\d+d\d$/u.test(rawDice)) {
         this.parsed.diceCount = parseInt(rawDice.split("d")[0], 10);
         this.parsed.diceSides = parseInt(rawDice.split("d")[1], 10);
       }
       this.dices = Array(this.parsed.diceCount).fill(this.parsed.diceSides);
-      this.parsed.targetScore = 0;
       const rawTarget = parts.shift();
       if (/^\d+$/u.test(rawTarget)) {
         this.parsed.targetScore = parseInt(rawTarget, 10);
       }
-      this.parsed.expiration = 24 * 60;
       if (parts.length) {
         const rawExpiration = parts.shift();
         if (!/^\d+$/u.test(rawExpiration)) {
           this.parsed.expiration = parseInt(rawExpiration, 10);
         }
       }
-      this.parsed.buttonText = "<i icon='dices'></i> Roll the dice";
       if (parts.length) {
         this.parsed.buttonText = parts.shift();
       }
