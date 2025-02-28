@@ -1,9 +1,9 @@
-# Dice Roller
+# [Z] Dice Roller
 *When rolling decides your fate*
 
 > Part of the [Z-Apps](https://github.com/clement-gouin/z-app)
 
-### [Tool link](https://clement-gouin.github.io/dice-roller/)
+### [Tool link](https://clement-gouin.github.io/z-dice-roller/)
 
 ## Data format
 
