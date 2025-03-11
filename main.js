@@ -247,11 +247,13 @@ const app = createApp({
         if (!this.debug) {
           this.readonly = true;
           const url = new URL(window.location);
-          utils.setCookie(
-            url.searchParams.get("z"),
-            this.dices.join(","),
-            this.parsed.expiration
-          );
+          if (this.parsed.expiration) {
+            utils.setCookie(
+              url.searchParams.get("z"),
+              this.dices.join(","),
+              this.parsed.expiration
+            );
+          }
         }
       }, 1000);
     },
